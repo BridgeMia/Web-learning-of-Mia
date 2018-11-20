@@ -113,11 +113,28 @@ class A:
 	def __init__(self, private_val):
 		self.__private_val = private_val
 		
+	# Use decorator
 	@property
 	def private_val(self)
 		return self.__private_val
 		
+class B:
+	def __init__(self, a, b):
+		self.a = a
+		self.b = b
+	
+	def __mul(self):
+		return self.a * self.b
+	
+	prod = property(__mul)
 
+if __name__ == '__main__':
+
+    a = A()
+    print(a.mul)
+    
+    b = B(4, 5)
+    print(b.prod)
 
 if __name__ == '__main__': 
 	a = A("value1")
