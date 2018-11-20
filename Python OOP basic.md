@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
 ## 属性（property)
 属性也是OOP中比较方便的一种写法，个人的理解是把类中的函数当做一个变量来调用，除了上面的例子中为私有的变量或者函数提供接口之外，
-还可以用来方便的返回一些比较计算方法固定的值。
+还可以用来方便的返回一些计算**固定**的值。注意因为他还是一个函数，所以并不能修改，就比较安全。
  - 为私有方法/变量提供访问接口    
  
 ```python
@@ -156,4 +156,51 @@ if __name__ == '__main__':
 	print(square_1.area)
 ```
 
-## 静态方法（staticmethod）
+## 类中的三总方法（函数）
+### 成员方法
+是实例的方法，就是说实例化之后才能调用的方法，就是我们定义一个类中最普通的方法。    
+ - **关于self**   
+ **这个有点纠结，日常用的时候并不会出现这么复杂的情况（当然出现了再说吧），我们可以统一约定一下，成员函数的第一个参数就是self**
+ 一般来说感觉上成员函数好像总是跟self这个参数关联起来的，但是实际上self只是一个参数，让你在这个函数内部能访问到这个函数外部，
+ 但是又在类的内部的一些变量或者方法，跟后面可能出现的其他参数是没有本质区别的，跟这个函数是不是成员函数也没有关系。下面看两个比较纠结的例子：
+
+```python
+class Box:
+	def __init__(self, size, color):
+		self.size = size
+		self.color = color
+		
+	def normal_open(self): 
+		print('box %s - %s opened'%(self.size, self.color))
+	
+	def self_open(self, box_self):
+		print('box %s - %s opened'%(box_self.size, box_self.color))
+
+if __name__ == '__main__':
+	sample_box = Box(12, 'red')
+	sample_box.normal_open()
+	sample_box.self_open(sample_box)
+```
+上面的看起来很别扭，而且`self_open`这个函数其实是不太好的，那么我们来看下self这个参数到底有没有用：
+
+```
+class Box:
+	def box_init(box_self, size, color):
+		box_self.size = size
+		box_self.color = color
+	def self_open(self, box_self):
+		print('box %s - %s opened'%(box_self.size, box_self.color))
+
+ 
+	
+### 静态方法（staticmethod）
+静态方法是一个类不用初始化就能调用的方法，看下面的例子
+```python
+class date:
+	def __init__(self, year, month, day):
+		self.year = year
+		self.month = month
+		self.day = day
+	
+	def str_form(self):
+	
