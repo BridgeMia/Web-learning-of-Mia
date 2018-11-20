@@ -128,19 +128,16 @@ class B:
 	
 	prod = property(__mul)
 
-if __name__ == '__main__':
-
-    a = A()
-    print(a.mul)
-    
-    b = B(4, 5)
-    print(b.prod)
-
 if __name__ == '__main__': 
 	a = A("value1")
 	
 	# Out: value1
 	print(a.private_val)
+	
+	b = B(4, 5)
+	
+	# Out: 20
+	b.prod
 ```
  - 返回一个计算好的值
 
