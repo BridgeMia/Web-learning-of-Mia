@@ -170,8 +170,9 @@ if __name__ == '__main__':
 是实例的方法，就是说实例化之后才能调用的方法，就是我们定义一个类中最普通的方法。    
 
 - **关于self**   
-  **这个有点纠结，日常用的时候并不会出现这么复杂的情况，我们可以统一约定一下，成员函数的第一个参数就是self**    
-   下面开始比较纠结的部分。一般来说感觉上成员函数好像总是跟self这个参数关联起来的，但是实际上self只是一个参数，让你在这个函数内部能访问到这个函数外部，又在类的内部的一些变量或者方法，跟后面可能出现的其他参数是没有本质区别的，跟这个函数是不是成员函数也没有关系。下面看两个比较纠结的例子：
+  **这个有点纠结，觉得复杂可以直接看结论。我们可以统一约定一下，成员函数的第一个参数就是self**   
+
+  下面开始比较纠结的部分。一般来说感觉上成员函数好像总是跟self这个参数关联起来的，但是实际上self只是一个参数，让你在这个函数内部能访问到这个函数外部，又在类的内部的一些变量或者方法，跟后面可能出现的其他参数是没有本质区别的，跟这个函数是不是成员函数也没有关系。下面看两个比较纠结的例子：
 
 ```python
 class Box:
@@ -198,10 +199,14 @@ if __name__ == '__main__':
 	print(sample_box.__dict__)
 ```
 
-上面的看起来很别扭，而且`self_open`这个函数其实是不太好的，但是最后打印的dict其实可看做self的内容。那么我们来看下self这个参数到底有什么用：
+上面的看起来很别扭，而且`self_open`这个函数其实是不太好的，但是最后打印的dict其实可看做self的内容。所以self可以看做是一个包含了我们定义的这个类在实例化之后的对象的所有属性。可以看接下来的这个例子：
 
 ```python
 class Box:
+    
+  	def __init__(self):
+        pass
+    
 	def box_init(box_self, size, color):
 		box_self.size = size
         box_self.color = color
@@ -209,17 +214,120 @@ class Box:
     
     def self_open(self, box_self):
         print(self)
+        
         print('box %s - %s opened'%(self.size, self.color))
+        print('box %s - %s opened'%(box_self.size, box_self.color))
 
 if __name__ == '__main__':
-    sample_box = Box().box_init(12, 'red')
+    sample_box = Box()
+
+    # Will cause AttibuteError: 'Box' object has not attribute 'size'
+    sample_box.self_open(sample_box)
+
+    sample_box.box_init(12, 'red')
     
     # Out: 
     # <__main__.Box object at xxxxxxxxx>
     # box 12 - red opened
     sample_box.self_open(sample_box)
-
+    
+    
+    # Out: 
+    # <__main__.Box object at xxxxxxxxx>
+    # box 12 - red opened
+    #sample_box_1.self_open(sample_box_1)
 ```
 
+这个例子里面，正常实例化的时候，Box类的object是没有size和color这两个属性的，但是在你调用自己定义的`box_init`的时候，（注意我们的第一个参数是`box_self`而不是`self`），其实是把你之前实例化之后的object（也就是`sample_object`）传进了这个函数，让这个object具有了color和size这两个属性，在`self_open`函数中，同样传入了的是这个object，这个时候就可以正常打印size和color了。
 
+**结论**：我们在类中**定义成员函数**的时候，第一个参数不管你叫他self也好，叫他my_self也好，都是这个函数在实例化之后的对象。在实例化之后，在**调用这个对象的成员函数**的时候，这个对象会作为self（或者是你定义的任何名字）被传入这个函数中，这个过程是自动的，不需要你手动加上`self = object_name`。
+
+### 静态方法
+
+静态方法（static method）是类中不需要实例化就可以调用的函数，具体可以直接看下面的例子：
+
+```python
+from datetime import date,datetime
+
+class my_date:
+
+    def __init__(self, year, month, day):
+        self.day = day
+        self.month = month
+        self.year = year
+
+    def str_format_print(self, split = '-'):
+        print(self.year,split,self.month,split,self.day)
+
+    @staticmethod
+    def get_current_date():
+        print(datetime.now())
+
+if __name__ == '__main__':
+    # Out: Current date and time
+    my_date.get_current_date()
+
+    my_date_sample = my_date(2018,11,21)
+    
+    # Out: 2018 - 11 - 21
+    my_date_sample.str_format_print()
+```
+
+也就是有时候我们定义的类中的函数可能在调用的时候并不需要实例化，这时候就可以把它定义成静态方法。
+
+
+
+### 类方法
+
+类方法（class method）是用来给类自己的方法，传入的参数是一个class（一般写成cls），可以看下面的代码：
+
+```python
+from datetime import date,datetime
+
+class my_date:
+
+    def __init__(self, year, month, day):
+        self.day = day
+        self.month = month
+        self.year = year
+
+    def str_format_print(self, split = '-'):
+        print(self.year,split,self.month,split,self.day)
+
+    @staticmethod
+    def get_current_date():
+        print(datetime.now())
+
+    @classmethod
+    def init_with_str_date(cls, str_date):
+        year, month, day = [int(x) for x in str_date.split('-')]
+        date1 = cls(year, month, day)
+        return date1
+
+if __name__ == '__main__':
+    # Out: Current date
+    my_date.get_current_date()
+
+    my_date_sample = my_date(2018,11,21)
+    
+    # Out: 2018 - 11 - 21
+    my_date_sample.str_format_print()
+
+    
+    my_date_sample1 = my_date.init_with_str_date('2018-11-21')
+
+    # Out: 2018 11 21
+    print(my_date_sample1.year, my_date_sample1.month, my_date_sample1.day)
+    # Out: 2018 - 11 - 21
+    my_date_sample.str_format_print()
+    
+```
+
+这里我们定义了一个新的date类，可以从一个字符串来初始化，这样的好处在于，我们不用对类本身的成员方法做出修改，在重构这个类的时候，要添加新的方法可以直接加而不影响类实例化之后的对象。
+
+
+
+### TODO
+
+后面会接着介绍父类子类和继承之类的知识
 
