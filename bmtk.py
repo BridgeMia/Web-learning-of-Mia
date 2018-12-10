@@ -91,6 +91,10 @@ class ErgodicDir:
     def export(self):
         return self.files
 
+def list_split_g(lst, n):
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
+
 if __name__ == '__main__':
     ergodic_dir_sp = ErgodicDir(r'sourse/testdir')
     ergodic_dir_sp.run()
