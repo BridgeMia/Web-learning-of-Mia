@@ -95,6 +95,13 @@ def list_split_g(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
+def list_spilt(lst, n):
+    ret = []
+    for i in range(0, len(lst), n):
+        ret.append(lst[i: i+n])
+    return ret
+
+
 if __name__ == '__main__':
     ergodic_dir_sp = ErgodicDir(r'sourse/testdir')
     ergodic_dir_sp.run()
