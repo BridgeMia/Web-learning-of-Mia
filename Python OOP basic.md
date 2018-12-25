@@ -327,7 +327,44 @@ if __name__ == '__main__':
 
 
 
-### TODO
+## 继承
 
-后面会接着介绍父类子类和继承之类的知识
+定义一个父类：
+
+```python
+class BaseMoedl:
+    def __init__(self):
+        self.model = self.build_model()
+
+    def build_model(self):
+        return "base model"
+
+    @staticmethod
+    def preprocess(data_in):
+        return "process ret of base model"
+
+    def train(self, train_data):
+        return "trained base model with %s"%train_data
+
+    def predict(self, pred_data):
+        return "prediction of  %s"%pred_data
+```
+
+然后用一个子类来继承它：
+
+```python
+class ExtendModel(BaseMoedl):
+
+    def __init__(self, para):
+        super(ExtendModel, self).__init__()
+        self.para = para
+
+    def build_model(self):
+        return "extend model"
+
+    def train(self, train_data):
+        return "trained base model with %s and parameters: %s"%(train_data, self.para)
+```
+
+
 
