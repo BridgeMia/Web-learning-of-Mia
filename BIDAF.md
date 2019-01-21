@@ -75,4 +75,4 @@ $$
 $$
 这样得到的向量表示了对Q1中的每个词的加权平均。
 
-这样得到的$$\tilde{\mathbf{h}}$$ 跟i没有关系，操作T次得到的矩阵$$\tilde{\mathbf{H}} \in \mathbb{R} ^ {2d \times T}​$$ 
+这样得到的$$\tilde{\mathbf{h}}$$ 跟i没有关系，操作T次得到的矩阵$$\tilde{\mathbf{H}} \in \mathbb{R} ^ {2d \times T}$$ ，也就是说$$\tilde{\mathbf{H}}$$是由T个同样的$$\tilde{\mathbf{h}}$$构成的。
