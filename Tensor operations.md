@@ -569,9 +569,7 @@ a = tf.constant(np.arange(7, 13, dtype=np.int32))
 b = tf.constant(np.arange(19, 25, dtype=np.int32))
 ```
 
-
-
-​	axes=1, 运算结果是向量点积，所以要求长度相同，即m = n
+axes=1, 运算结果是向量点积，所以要求长度相同，即m = n
 $$
 \vec A \cdot \vec B = \sum_{i}^n a_i b_i
 $$
@@ -585,7 +583,8 @@ print(tf.Session().run(c))
 
 ​	
 
-​	axes=0，运算结果是外积，m和n可以不相等, 运算结果是向量A和向量B的转置的外积：
+	axes=0，运算结果是外积，m和n可以不相等, 运算结果是向量A和向量B的转置的外积：
+
 $$
 \textbf B^T = \left[
     \begin{matrix}
@@ -615,7 +614,8 @@ print(tf.Session().run(c))
  
 ```
 
-​	注意这里a和b有先后关系，交换之后，计算的就是
+	注意这里a和b有先后关系，交换之后，计算的就是
+
 $$
 \textbf B \otimes \textbf{A}^T
 $$
@@ -705,166 +705,52 @@ print(tf.Session().run(c))
 
     矩阵：
     $$
-    \begin{bmatrix}
-    133 & 152 & 171 & 190 & 209 & 228\\
-    140 & 160 & 180 & 200 & 220 & 240\\
-    147 & 168 & 189 & 210 & 231 & 252\\
-    154 & 176 & 198 & 220 & 242 & 264\\
-    161 & 184 & 207 & 230 & 253 & 276\\
-    168 & 192 & 216 & 240 & 264 & 288
-    \end{bmatrix}
+    \begin{bmatrix}133 & 152 & 171 & 190 & 209 & 228\\140 & 160 & 180 & 200 & 220 & 240\\147 & 168 & 189 & 210 & 231 & 252\\154 & 176 & 198 & 220 & 242 & 264\\161 & 184 & 207 & 230 & 253 & 276\\168 & 192 & 216 & 240 & 264 & 288\end{bmatrix}
     $$
 
-
-    代码：
-
-    ```python
-    # print(arr)
-    # Output of
-    [[133 152 171 190 209 228]
-     [140 160 180 200 220 240]
-     [147 168 189 210 231 252]
-     [154 176 198 220 242 264]
-     [161 184 207 230 253 276]
-     [168 192 216 240 264 288]]
-    ```
-
-    目前为止还没什么问题，但是当运算的tensor是二维的时候，结果是一个分块矩阵，我们只能用
-    $$
-    A \otimes B = 
-    \begin{bmatrix}
-    a_{1,1}B & \cdots & a_{1,n}B\\
-    \vdots & \ddots & \vdots\\
-    a_{m,1}B & \cdots & a_{m,n}B
-    \end{bmatrix}
-    $$
-    这样的形式来表示这个矩阵，而不能是：
-
-
-    $$
-    A\otimes B={\begin{bmatrix}a_{11}b_{11}&
-    a_{11}b_{12}&
-    \cdots &
-    a_{11}b_{1q}&
-    \cdots &
-    \cdots &
-    a_{1n}b_{11}&
-    a_{1n}b_{12}&
-    \cdots &
-    a_{1n}b_{1q}\\a_{11}b_{21}&
-    a_{11}b_{22}&
-    \cdots &
-    a_{11}b_{2q}&
-    \cdots &
-    \cdots &
-    a_{1n}b_{21}&
-    a_{1n}b_{22}&
-    \cdots &
-    a_{1n}b_{2q}\\\vdots &
-    \vdots &
-    \ddots &
-    \vdots &
-    &
-    &
-    \vdots &
-    \vdots &
-    \ddots &
-    \vdots \\a_{11}b_{p1}&
-    a_{11}b_{p2}&
-    \cdots &
-    a_{11}b_{pq}&
-    \cdots &
-    \cdots &
-    a_{1n}b_{p1}&
-    a_{1n}b_{p2}&
-    \cdots &
-    a_{1n}b_{pq}\\\vdots &
-    \vdots &
-    &
-    \vdots &
-    \ddots &
-    &
-    \vdots &
-    \vdots &
-    &
-    \vdots \\\vdots &
-    \vdots &
-    &
-    \vdots &
-    &
-    \ddots &
-    \vdots &
-    \vdots &
-    &
-    \vdots \\a_{m1}b_{11}&
-    a_{m1}b_{12}&
-    \cdots &
-    a_{m1}b_{1q}&
-    \cdots &
-    \cdots &
-    a_{mn}b_{11}&
-    a_{mn}b_{12}&
-    \cdots &
-    a_{mn}b_{1q}\\a_{m1}b_{21}&
-    a_{m1}b_{22}&
-    \cdots &
-    a_{m1}b_{2q}&
-    \cdots &
-    \cdots &
-    a_{mn}b_{21}&
-    a_{mn}b_{22}&
-    \cdots &
-    a_{mn}b_{2q}\\\vdots &
-    \vdots &
-    \ddots &
-    \vdots &
-    &
-    &
-    \vdots &
-    \vdots &
-    \ddots &
-    \vdots \\a_{m1}b_{p1}&
-    a_{m1}b_{p2}&
-    \cdots &
-    a_{m1}b_{pq}&
-    \cdots &
-    \cdots &
-    a_{mn}b_{p1}&
-    a_{mn}b_{p2}&
-    \cdots &
-    a_{mn}b_{pq}\end{bmatrix}}
-    $$
-
-
-    我们打印一下形状：
-
-    ```python
-    import tensorflow as tf
-    import numpy as np
-    
-    
-    a = tf.constant([1,1,1,2,2,2], dtype=np.int32, shape=[2,3])
-    b = tf.constant(np.arange(1, 7, dtype=np.int32), shape=[3,2])
-    
-    
-    c = tf.tensordot(a, b, axes=0)
-    
-    print(tf.Session().run(c).shape)
-    # output: 
-    (2, 3, 3, 2)
-    ```
-
-    上面的代码表明，ndarray/tensor中包含了分块矩阵的信息！
-
-    从形状我们可以看出来，这是一个两行三列的分块矩阵，其中的每个矩阵块又是一个三行两列的矩阵，也就是说ndarray/tensor除了储存了矩阵中元素的位置和数值信息，还储存了这个矩阵的分块信息。
-
-    当然，这个还只是tensor的维度是四维的情况下，再高维度tensor对应的就是分块矩阵中的每个矩阵块还是
+```python
+# print(arr)
+# Output of
+[[133 152 171 190 209 228]
+ [140 160 180 200 220 240]
+ [147 168 189 210 231 252]
+ [154 176 198 220 242 264]
+ [161 184 207 230 253 276]
+ [168 192 216 240 264 288]]
+```
 
 
 
+目前为止还没什么问题，但是当运算的tensor是二维的时候，结果是一个分块矩阵，我们只能用
+$$
+A \otimes B = \begin{bmatrix}a_{1,1}B & \cdots & a_{1,n}B\\\vdots & \ddots & \vdots\\a_{m,1}B & \cdots & a_{m,n}B\end{bmatrix}
+$$
+这样的形式来表示这个矩阵，而不能是：
+$$
+A\otimes B={\begin{bmatrix}a_{11}b_{11}&a_{11}b_{12}&\cdots &a_{11}b_{1q}&\cdots &\cdots &a_{1n}b_{11}&a_{1n}b_{12}&\cdots &a_{1n}b_{1q}\\a_{11}b_{21}&a_{11}b_{22}&\cdots &a_{11}b_{2q}&\cdots &\cdots &a_{1n}b_{21}&a_{1n}b_{22}&\cdots &a_{1n}b_{2q}\\\vdots &\vdots &\ddots &\vdots &&&\vdots &\vdots &\ddots &\vdots \\a_{11}b_{p1}&a_{11}b_{p2}&\cdots &a_{11}b_{pq}&\cdots &\cdots &a_{1n}b_{p1}&a_{1n}b_{p2}&\cdots &a_{1n}b_{pq}\\\vdots &\vdots &&\vdots &\ddots &&\vdots &\vdots &&\vdots \\\vdots &\vdots &&\vdots &&\ddots &\vdots &\vdots &&\vdots \\a_{m1}b_{11}&a_{m1}b_{12}&\cdots &a_{m1}b_{1q}&\cdots &\cdots &a_{mn}b_{11}&a_{mn}b_{12}&\cdots &a_{mn}b_{1q}\\a_{m1}b_{21}&a_{m1}b_{22}&\cdots &a_{m1}b_{2q}&\cdots &\cdots &a_{mn}b_{21}&a_{mn}b_{22}&\cdots &a_{mn}b_{2q}\\\vdots &\vdots &\ddots &\vdots &&&\vdots &\vdots &\ddots &\vdots \\a_{m1}b_{p1}&a_{m1}b_{p2}&\cdots &a_{m1}b_{pq}&\cdots &\cdots &a_{mn}b_{p1}&a_{mn}b_{p2}&\cdots &a_{mn}b_{pq}\end{bmatrix}}
+$$
 
 
 
+​    我们打印一下形状：
 
+```python
+import tensorflow as tf
+import numpy as np
 
+a = tf.constant([1,1,1,2,2,2], dtype=np.int32, shape=[2,3])
+b = tf.constant(np.arange(1, 7, dtype=np.int32), shape=[3,2])
+
+c = tf.tensordot(a, b, axes=0)
+
+print(tf.Session().run(c).shape)
+# output: 
+(2, 3, 3, 2)
+```
+
+上面的代码表明，ndarray/tensor中包含了分块矩阵的信息！
+
+从形状我们可以看出来，这是一个两行三列的分块矩阵，其中的每个矩阵块又是一个三行两列的矩阵，也就是说ndarray/tensor除了储存了矩阵中元素的位置和数值信息，还储存了这个矩阵的分块信息。
+
+当然，这个还只是tensor的维度是四维的情况下，再高维度tensor对应的就是分块矩阵中的每个矩阵块还是
 
